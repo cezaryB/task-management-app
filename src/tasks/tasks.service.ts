@@ -39,7 +39,7 @@ export class TasksService {
       description,
       id: uuid(),
       status: TaskStatus.OPEN,
-    }
+    };
 
     this.tasks = [...this.tasks, createdTask];
     return createdTask;

@@ -15,7 +15,7 @@ export class TasksController {
   }
 
   @Get()
-  getTasks(@Query() filterDto: GetTasksFilterDto): Task[] {
+  getTasks(@Query(ValidationPipe) filterDto: GetTasksFilterDto): Task[] {
     if (filterDto.hasOwnProperty('status') || filterDto.hasOwnProperty('search')) {
       return this.tasksService.getTasks(filterDto);
     }
