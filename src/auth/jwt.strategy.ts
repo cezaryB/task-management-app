@@ -10,14 +10,14 @@ import { User } from './user.entity';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     @InjectRepository(UserRepository)
-    private userRepository: UserRepository
+    private userRepository: UserRepository,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: 'topSecret51',
     });
   }
-  
+
   async validate(payload: JwtPayload): Promise<User> {
     const { username } = payload;
     const user = await this.userRepository.findOne({ username });
