@@ -14,8 +14,8 @@ export class TasksService {
     private taskRepository: TaskRepository,
   ) {}
 
-  async getTask(id: number): Promise<Task> {
-    const foundTask = await this.taskRepository.findOne(id);
+  getTask(id: number, user: User): Promise<Task> {
+    const foundTask = this.taskRepository.findOne({ where: { id, userId: user.id } })
 
     if (!foundTask) {
       throw new NotFoundException(`Task with id ${id} not found`);
@@ -23,8 +23,8 @@ export class TasksService {
     return foundTask;
   }
 
-  getTasks(filterDto: GetTasksFilterDto): Promise<Task[]> {
-    return this.taskRepository.getTasks(filterDto);
+  getTasks(filterDto: GetTasksFilterDto, user: User): Promise<Task[]> {
+    return this.taskRepository.getTasks(filterDto, user);
   }
 
   async createTask(
@@ -34,24 +34,24 @@ export class TasksService {
     return await this.taskRepository.createTask(createTaskDto, user);
   }
 
-  async updateTaskDescription(id: number, description: string): Promise<Task> {
-    const task = await this.getTask(id);
+  async updateTaskDescription(id: number, description: string, user: User): Promise<Task> {
+    const task = await this.getTask(id, user);
     task.description = description;
     task.save();
 
     return task;
   }
 
-  async updateTaskStatus(id: number, status: TaskStatus): Promise<void> {
-    const result =  await this.taskRepository.update(id, { status });
+  async updateTaskStatus(id: number, status: TaskStatus, user: User): Promise<void> {
+    const result =  await this.taskRepository.update({ id, userId: user.id }, { status });
 
     if (!result.affected) {
       throw new NotFoundException(`Task with ID "${id}" not found`);
     }
   }
 
-  async deleteTask(id: number): Promise<void> {
-    const result = await this.taskRepository.delete(id);
+  async deleteTask(id: number, user: User): Promise<void> {
+    const result = await this.taskRepository.delete({ id, userId: user.id });
 
     if (!result.affected) {
       throw new NotFoundException(`Task with ID "${id}" not found`);
